@@ -185,3 +185,40 @@ gmm_results <- data %>%
   bind_rows()
 
 gmm_results
+
+
+#one-dimensional data, e.g., 'percent_voiced'
+s_data <- data_s %>%
+  filter(
+    group == "BiSpanish",
+    !is.na(percent_voiced)
+  )
+
+gmm_s <- Mclust(
+  s_data$percent_voiced,
+  G = 1:3
+)
+
+summary(gmm_s)
+
+table(gmm_s$classification)
+
+#draw
+s_data$component <- factor(
+  gmm_s$classification
+)
+
+ggplot(
+  s_data,
+  aes(
+    x = percent_voiced,
+    fill = component
+  )
+) +
+  geom_density(alpha = 0.4) +
+  labs(
+    x = "Percent voiced",
+    y = "Density",
+    fill = "Component"
+  ) +
+  theme_classic()
